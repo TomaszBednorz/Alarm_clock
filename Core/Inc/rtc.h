@@ -3,8 +3,11 @@
 
 #include "main.h"
 
+extern I2C_HandleTypeDef hi2c2;
+
 /* Configurable items */
-#define RTC_I2C_HANDLE 	hi2c2
+#define DS3231_RTC_I2C_HANDLE 	hi2c2
+#define DS3231_RTC_I2C_ADDR 	0xD0
 
 /*
  * DS3231 registers
@@ -30,31 +33,41 @@
 #define DS3231_LSB_TEMP			0x12
 
 // RTC contains 2 different alarms. Param: @RTC_DS3231_ALARM
-#define ALARM_1					1
-#define ALARM_2					2
+#define DS3231_RTC_ALARM_1		1
+#define DS3231_RTC_ALARM_2		2
 
 // param @RTC_DS3231_DAY
-#define RTC_SUNDAY 		1
-#define RTC_MONDAY		2
-#define RTC_TUESDAY		3
-#define RTC_WEDNESDAY	4
-#define RTC_THURSDAY	5
-#define RTC_FRIDAY		6
-#define RTC_SATURDAY	7
+#define DS3231_RTC_SUNDAY 		1
+#define DS3231_RTC_MONDAY		2
+#define DS3231_RTC_TUESDAY		3
+#define DS3231_RTC_WEDNESDAY	4
+#define DS3231_RTC_THURSDAY		5
+#define DS3231_RTC_FRIDAY		6
+#define DS3231_RTC_SATURDAY		7
 
 // param @RTC_DS3231_Month
-#define RTC_JANUARY 	1
-#define RTC_FEBRUARY	2
-#define RTC_MARCH		3
-#define RTC_APRIL		4
-#define RTC_MAY			5
-#define RTC_JUNE		6
-#define RTC_JULY		7
-#define RTC_AUGUST		8
-#define RTC_SEPTEMBER	9
-#define RTC_OCTOBER		10
-#define RTC_NOVEMBER	11
-#define RTC_DECEMBER	12
+#define DS3231_RTC_JANUARY 		1
+#define DS3231_RTC_FEBRUARY		2
+#define DS3231_RTC_MARCH		3
+#define DS3231_RTC_APRIL		4
+#define DS3231_RTC_MAY			5
+#define DS3231_RTC_JUNE			6
+#define DS3231_RTC_JULY			7
+#define DS3231_RTC_AUGUST		8
+#define DS3231_RTC_SEPTEMBER	9
+#define DS3231_RTC_OCTOBER		10
+#define DS3231_RTC_NOVEMBER		11
+#define DS3231_RTC_DECEMBER		12
+
+// Hours format in DS3231_RTC_HOURS register
+#define DS3231_RTC_24_HOURS_FORMAT		(0 << 6)
+#define DS3231_RTC_12_HOURS_FORMAT		(1 << 6)
+
+// DS3231 register masks (for value to read)
+#define DS3231_RTC_SECONDS_MASK	0x7F
+#define DS3231_RTC_MINUTES_MASK	0x7F
+#define DS3231_RTC_HOURS_MASK	0x3F
+
 
 /*
  * Structures
@@ -84,8 +97,6 @@ typedef struct
 /*
  * Functions prototypes
  */
-
-void rtc_init(void);
 void rtc_set_time(RTC_time *time);
 RTC_time rtc_get_time(void);
 void rtc_set_date(RTC_date *date);

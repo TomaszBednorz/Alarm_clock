@@ -31,7 +31,7 @@ void i2c1_init(void)
 void i2c2_init(void)
 {
 	hi2c2.Instance = I2C2;
-	hi2c2.Init.Timing = 0x2000090E; // I2C standard mode: 100kHz
+	hi2c2.Init.Timing = 0x2000090E;
 	hi2c2.Init.OwnAddress1 = 0;
 	hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
 	hi2c2.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;

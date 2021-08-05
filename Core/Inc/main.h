@@ -9,6 +9,7 @@
 
 #include "i2c.h"
 #include "lcd.h"
+#include "rtc.h"
 
 void error_handler(void);
 

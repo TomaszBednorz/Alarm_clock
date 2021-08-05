@@ -17,6 +17,7 @@ extern I2C_HandleTypeDef hi2c1;
 
 /* Configurable items */
 #define LCD_I2C_HANDLE 	hi2c1
+#define LCD_I2C_ADDR 	(0x27 << 1)
 
 // Pind in LCD
 #define RS_PIN			0x1
@@ -43,7 +44,6 @@ extern I2C_HandleTypeDef hi2c1;
 
 typedef struct
 {
-	uint8_t addr;
 	bool backlight;
 	char line_1st[17];
 	char line_2nd[17];

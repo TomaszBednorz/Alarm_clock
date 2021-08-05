@@ -40,11 +40,11 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef *hi2c)
 		__I2C2_CLK_ENABLE();
 		__GPIOB_CLK_ENABLE();
 
-		GPIO_i2c1.Pin = GPIO_PIN_13 | GPIO_PIN_14;
-		GPIO_i2c1.Pull = GPIO_NOPULL;
-		GPIO_i2c1.Speed = GPIO_SPEED_FREQ_MEDIUM;
-		GPIO_i2c1.Mode = GPIO_MODE_AF_OD;
-		GPIO_i2c1.Alternate = GPIO_AF5_I2C2;
+		GPIO_i2c2.Pin = GPIO_PIN_13 | GPIO_PIN_14;
+		GPIO_i2c2.Pull = GPIO_PULLUP;
+		GPIO_i2c2.Speed = GPIO_SPEED_FREQ_MEDIUM;
+		GPIO_i2c2.Mode = GPIO_MODE_AF_OD;
+		GPIO_i2c2.Alternate = GPIO_AF5_I2C2;
 		HAL_GPIO_Init(GPIOB, &GPIO_i2c2);
 	}
 }

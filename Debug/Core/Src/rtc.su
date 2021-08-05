@@ -1,7 +1,10 @@
-rtc.c:11:6:rtc_init	8	static
-rtc.c:25:6:rtc_set_time	16	static
-rtc.c:37:10:rtc_get_time	8	static
-rtc.c:51:6:rtc_set_date	16	static
-rtc.c:63:10:rtc_get_date	8	static
-rtc.c:78:6:rtc_set_alarm	16	static
-rtc.c:92:11:rtc_get_alarm	16	static
+rtc.c:20:6:rtc_set_time	24	static
+rtc.c:36:10:rtc_get_time	16	static
+rtc.c:56:6:rtc_set_date	16	static
+rtc.c:68:10:rtc_get_date	8	static
+rtc.c:83:6:rtc_set_alarm	16	static
+rtc.c:97:11:rtc_get_alarm	16	static
+rtc.c:103:13:rtc_write	32	static
+rtc.c:112:16:rtc_read	40	static
+rtc.c:124:16:bcd_to_bin	32	static
+rtc.c:132:16:bin_to_bcd	40	static
