@@ -7,6 +7,7 @@ Small home project of alarm clock, which contain some easy to do features. Proje
 - User can read current date and time from LCD display
 - User can set two different alarms and current time by buttons
 - Alarms trigger buzzer and LED strip
+- User can choose different types of LED blinking and buzzer sounds
 
 ## Bill of materials
 - STM32 Nucleo F072RB
@@ -19,8 +20,9 @@ Small home project of alarm clock, which contain some easy to do features. Proje
 - Jumper wires
 
 ## TODO list
-- [ ] Library for RTC
-- [ ] Library for LCD display
-- [ ] Library for LED strip
+- [ ] RTC library
+- [x] LCD display library
+- [ ] LED strip  library
+- [ ] Buzzer library
 - [ ] Clock functionality implementation
 - [ ] Alarms functionality implementation
