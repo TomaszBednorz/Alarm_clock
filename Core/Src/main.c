@@ -8,13 +8,13 @@ int main(void)
 	disp.addr = (0x27 << 1);
 	disp.backlight = 1;
 
-	sprintf(disp.line_1st, "12 VI  12:14:15");
-	sprintf(disp.line_2nd, "<-   Alarm 1   -->");
+	sprintf(disp.line_1st, "12 VI 21r MON");
+	sprintf(disp.line_2nd, "10:11:12 AM 27*C");
 
 	HAL_Init();
 
 	i2c1_init();
-
+	i2c2_init();
 
 
 

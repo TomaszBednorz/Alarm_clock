@@ -4,7 +4,7 @@
 #include "main.h"
 
 void i2c1_init(void);
-
+void i2c2_init(void);
 
 
 

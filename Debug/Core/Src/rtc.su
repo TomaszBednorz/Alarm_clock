@@ -1,0 +1,7 @@
+rtc.c:11:6:rtc_init	8	static
+rtc.c:25:6:rtc_set_time	16	static
+rtc.c:37:10:rtc_get_time	8	static
+rtc.c:51:6:rtc_set_date	16	static
+rtc.c:63:10:rtc_get_date	8	static
+rtc.c:78:6:rtc_set_alarm	16	static
+rtc.c:92:11:rtc_get_alarm	16	static

@@ -3,6 +3,7 @@
 "Core/Src/lcd.o"
 "Core/Src/main.o"
 "Core/Src/msp.o"
+"Core/Src/rtc.o"
 "Core/Src/syscalls.o"
 "Core/Src/sysmem.o"
 "Core/Src/system_stm32f0xx.o"

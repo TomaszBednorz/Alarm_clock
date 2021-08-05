@@ -9,7 +9,7 @@ static void lcd_write(uint8_t addr, uint8_t data, uint8_t add_pins)
 	tx_data[2] = (data << 4) | EN_PIN | add_pins;
 	tx_data[3] = (data << 4) | add_pins;
 
-	HAL_I2C_Master_Transmit(&I2C_HANDLE, addr, tx_data, 4, 50);
+	HAL_I2C_Master_Transmit(&LCD_I2C_HANDLE, addr, tx_data, 4, 50);
 	HAL_Delay(5);
 }
 

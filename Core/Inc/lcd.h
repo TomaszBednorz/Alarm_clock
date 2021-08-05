@@ -15,20 +15,25 @@ extern I2C_HandleTypeDef hi2c1;
  *
  */
 
-#define I2C_HANDLE hi2c1
+/* Configurable items */
+#define LCD_I2C_HANDLE 	hi2c1
 
+// Pind in LCD
 #define RS_PIN			0x1
 #define RW_PIN			0x2
 #define EN_PIN			0x4
 #define BL_PIN			0x8
 
+// Addresses of lines in LCD
 #define FIRST_LINE		0x80
 #define SECOND_LINE		0xC0
 
+// Commands
 #define CMD_8_BIT_INIT	0x30
 #define CMD_4_BIT_INIT 	0x02
 #define CMD_LCD_CLEAR  	0x01
 
+// Cursor configuration
 #define CURSOR_OFF_BLINKING_OFF		0x0C
 #define CURSOR_OFF_BLINKING_ON		0x0D
 #define CURSOR_ON_BLINKING_OFF		0x0E
