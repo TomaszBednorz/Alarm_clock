@@ -65,13 +65,13 @@ void lcd_update(lcd_display* lcd)
 	lcd_clear(lcd);
 
 	lcd_write(lcd->addr, FIRST_LINE, bl);
-	for(int i = 0; i < strlen(lcd->line_1st); i++)
+	for(int i = 0; i < fmin(strlen(lcd->line_1st), LINE_LEN); i++)
 	{
 		lcd_write(lcd->addr, lcd->line_1st[i] , (bl | RS_PIN));
 	}
 
 	lcd_write(lcd->addr, SECOND_LINE, bl);
-	for(int i = 0; i < strlen(lcd->line_2nd); i++)
+	for(int i = 0; i < fmin(strlen(lcd->line_2nd), LINE_LEN); i++)
 	{
 		lcd_write(lcd->addr, lcd->line_2nd[i] , (bl | RS_PIN));
 	}

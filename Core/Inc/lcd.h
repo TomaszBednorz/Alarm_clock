@@ -34,12 +34,14 @@ extern I2C_HandleTypeDef hi2c1;
 #define CURSOR_ON_BLINKING_OFF		0x0E
 #define CURSOR_ON_BLINKING_ON		0x0F
 
+#define LINE_LEN	16
+
 typedef struct
 {
 	uint8_t addr;
+	bool backlight;
 	char line_1st[17];
 	char line_2nd[17];
-	bool backlight;
 }lcd_display;
 
 void lcd_init(lcd_display* lcd);
