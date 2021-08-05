@@ -1,4 +1,6 @@
+"Core/Src/i2c.o"
 "Core/Src/it.o"
+"Core/Src/lcd.o"
 "Core/Src/main.o"
 "Core/Src/msp.o"
 "Core/Src/syscalls.o"
