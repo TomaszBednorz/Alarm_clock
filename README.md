@@ -11,7 +11,7 @@ Small home project of alarm clock, which contain some easy to do features. Proje
 ## Bill of materials
 - STM32 Nucleo F072RB
 - DS3231 real time clock
-- LCD display HD44780
+- LCD display with HD44780 driver
 - I2C converter to HD44780
 - Buzzer
 - LED strip
