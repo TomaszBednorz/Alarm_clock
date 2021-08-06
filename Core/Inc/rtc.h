@@ -27,7 +27,7 @@ extern I2C_HandleTypeDef hi2c2;
 #define DS3231_AL2_HOURS		0x0C
 #define DS3231_AL2_DAY_DATE		0x0D
 #define DS3231_CTRL				0x0E  // Other registers
-#define DS3231_CTRL_STATUS		0x0F
+#define DS3231_STATUS			0x0F
 #define DS3231_OFFSET			0x10
 #define DS3231_MSP_TEMP			0x11
 #define DS3231_LSB_TEMP			0x12
@@ -35,6 +35,10 @@ extern I2C_HandleTypeDef hi2c2;
 // RTC contains 2 different alarms. Param: @RTC_DS3231_ALARM
 #define DS3231_RTC_ALARM_1		1
 #define DS3231_RTC_ALARM_2		2
+
+// Define for RTC alarm enable or disable. Param: @RTC_DS3231_CONTROL
+#define DS3231_RTC_AL_ENABLE	1
+#define DS3231_RTC_AL_DISABLE	0
 
 // param @RTC_DS3231_DAY
 #define DS3231_RTC_SUNDAY 		1
@@ -59,15 +63,43 @@ extern I2C_HandleTypeDef hi2c2;
 #define DS3231_RTC_NOVEMBER		11
 #define DS3231_RTC_DECEMBER		12
 
-// Hours format in DS3231_RTC_HOURS register
+// Hours format in DS3231_RTC_HOURS / DS3231_AL1_HOURS / DS3231_AL2_HOURS registers
 #define DS3231_RTC_24_HOURS_FORMAT		(0 << 6)
 #define DS3231_RTC_12_HOURS_FORMAT		(1 << 6)
 
-// DS3231 register masks (for value to read)
-#define DS3231_RTC_SECONDS_MASK	0x7F
-#define DS3231_RTC_MINUTES_MASK	0x7F
-#define DS3231_RTC_HOURS_MASK	0x3F
+// Day/date format in DS3231_AL1_HOURS / DS3231_AL2_HOURS registers
+#define DS3231_RTC_DAY_FORMAT		(1 << 6)
+#define DS3231_RTC_DATE_FORMAT		(0 << 6)
 
+// Century in DS3231_RTC_MONTH_CTR register
+#define DS3231_RTC_21_CENTURY		(0 << 7)
+#define DS3231_RTC_22_CENTURY		(1 << 7)
+
+// DS3231 register masks (for value to read and write)
+#define DS3231_RTC_SECONDS_MASK		0x7F
+#define DS3231_RTC_MINUTES_MASK		0x7F
+#define DS3231_RTC_HOURS_MASK		0x3F
+#define DS3231_RTC_DAY_MASK			0x07
+#define DS3231_RTC_DATE_MASK		0x3F
+#define DS3231_RTC_MONTH_MASK		0x1F
+
+/*
+ * Bitmasks
+ */
+#define DS3231_RTC_CTRL_A1IE  		0x01 	// Bitmask's in DS3231_CTRL
+#define DS3231_RTC_CTRL_A2IE 		0x02
+#define DS3231_RTC_CTRL_INTCN		0x04
+#define DS3231_RTC_CTRL_RS1			0x08
+#define DS3231_RTC_CTRL_RS2			0x10
+#define DS3231_RTC_CTRL_CONV		0x20
+#define DS3231_RTC_CTRL_BBSQW		0x40
+#define DS3231_RTC_CTRL_EOSC		0x80
+
+#define DS3231_RTC_STATUS_A1F	  	0x01 	// Bitmask's in DS3231_STATUS
+#define DS3231_RTC_STATUS_A2F		0x02
+#define DS3231_RTC_STATUS_BSY		0x04
+#define DS3231_RTC_STATUS_EN32KHZ	0x08
+#define DS3231_RTC_STATUS_OSF		0x80
 
 /*
  * Structures
@@ -103,6 +135,7 @@ void rtc_set_date(RTC_date *date);
 RTC_date rtc_get_date(void);
 void rtc_set_alarm(RTC_alarm *alarm, uint8_t alarm_num);
 RTC_alarm rtc_get_alarm(uint8_t alarm_num);
+void rtc_alarm_control(uint8_t alarm_num, uint8_t control);
 
 
 
