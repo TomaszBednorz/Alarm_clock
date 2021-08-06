@@ -20,7 +20,7 @@ Small home project of alarm clock, which contain some easy to do features. Proje
 - Jumper wires
 
 ## TODO list
-- [ ] RTC library
+- [x] RTC library
 - [x] LCD display library
 - [ ] LED strip  library
 - [ ] Buzzer library
