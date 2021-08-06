@@ -135,8 +135,8 @@ void rtc_set_date(RTC_date *date);
 RTC_date rtc_get_date(void);
 void rtc_set_alarm(RTC_alarm *alarm, uint8_t alarm_num);
 RTC_alarm rtc_get_alarm(uint8_t alarm_num);
-void rtc_alarm_control(uint8_t alarm_num, uint8_t control);
-
+void rtc_alarm_disable(uint8_t alarm_num);
+uint8_t is_alarm_activeted(void);
 
 
 #endif /* INC_RTC_H_ */

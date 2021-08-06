@@ -107,6 +107,16 @@ void rtc_set_alarm(RTC_alarm *alarm, uint8_t alarm_num)
 		uint8_t day = DS3231_RTC_DAY_FORMAT | ( bin_to_bcd(alarm->day) & DS3231_RTC_DAY_MASK );
 		rtc_write(DS3231_AL1_DAY_DATE, day);
 	}
+	else if(alarm_num == DS3231_RTC_ALARM_2)
+	{
+		rtc_write(DS3231_AL2_MINUTES, bin_to_bcd(alarm->minutes) & DS3231_RTC_MINUTES_MASK);
+
+		uint8_t hours = DS3231_RTC_24_HOURS_FORMAT | ( bin_to_bcd(alarm->hours) & DS3231_RTC_HOURS_MASK );
+		rtc_write(DS3231_AL2_HOURS, hours);
+
+		uint8_t day = DS3231_RTC_DAY_FORMAT | ( bin_to_bcd(alarm->day) & DS3231_RTC_DAY_MASK );
+		rtc_write(DS3231_AL2_DAY_DATE, day);
+	}
 }
 
 /*
@@ -120,70 +130,87 @@ void rtc_set_alarm(RTC_alarm *alarm, uint8_t alarm_num)
  */
 RTC_alarm rtc_get_alarm(uint8_t alarm_num)
 {
-
-}
-
-/*
- * @fn      		  - rtc_alarm_enable
- *
- * @param[in]         - alarm_num - param: @RTC_DS3231_ALARM
- *
- * @param[in]         - control - param: @RTC_DS3231_CONTROL
- *
- * @return            - None
- *
- * @Note              - This function enable alarm in DS3231 RTC
- */
-void rtc_alarm_control(uint8_t alarm_num, uint8_t control)
-{
-	uint8_t ctrl_reg = 0;
-	uint8_t status_reg = 0;
+	RTC_alarm alarm;
 
 	if(alarm_num == DS3231_RTC_ALARM_1)
 	{
-		if(control == DS3231_RTC_AL_ENABLE)
-		{
-			ctrl_reg |= DS3231_RTC_CTRL_A1IE;
-		}
-		else if(control == DS3231_RTC_AL_DISABLE)
-		{
-			ctrl_reg &= ~(DS3231_RTC_CTRL_A1IE);
-			status_reg &= ~(DS3231_RTC_STATUS_A1F);
-		}
-
+		alarm.minutes = bcd_to_bin(rtc_read(DS3231_AL1_MINUTES) & DS3231_RTC_MINUTES_MASK);
+		alarm.hours = bcd_to_bin(rtc_read(DS3231_AL1_HOURS) & DS3231_RTC_HOURS_MASK);
+		alarm.day = bcd_to_bin(rtc_read(DS3231_AL1_DAY_DATE) & DS3231_RTC_DAY_MASK);
 	}
 	else if(alarm_num == DS3231_RTC_ALARM_2)
 	{
-		if(control == DS3231_RTC_AL_ENABLE)
-		{
-			ctrl_reg |= DS3231_RTC_CTRL_A2IE;
-		}
-		else if(control == DS3231_RTC_AL_DISABLE)
-		{
-			ctrl_reg &= ~(DS3231_RTC_CTRL_A2IE);
-			status_reg |= DS3231_RTC_STATUS_A2F;
-		}
+		alarm.minutes = bcd_to_bin(rtc_read(DS3231_AL2_MINUTES) & DS3231_RTC_MINUTES_MASK);
+		alarm.hours = bcd_to_bin(rtc_read(DS3231_AL2_HOURS) & DS3231_RTC_HOURS_MASK);
+		alarm.day = bcd_to_bin(rtc_read(DS3231_AL2_DAY_DATE) & DS3231_RTC_DAY_MASK);
 	}
 
-	// Default options in DS3231_CTRL register
-	ctrl_reg |= DS3231_RTC_CTRL_INTCN;
-	ctrl_reg |= DS3231_RTC_CTRL_RS2;
-	ctrl_reg |= DS3231_RTC_CTRL_RS2;
-
-	rtc_write(DS3231_CTRL, ctrl_reg);
-
-	if(control == DS3231_RTC_AL_DISABLE)
-	{
-		// Default options in DS3231_STATUS register
-		status_reg |= DS3231_RTC_STATUS_EN32KHZ;
-		status_reg |= DS3231_RTC_STATUS_OSF;
-
-		rtc_write(DS3231_STATUS, status_reg);
-	}
-
+	return alarm;
 }
 
+/*
+ * @fn      		  - rtc_alarm_disable
+ *
+ * @param[in]         - alarm_num - param: @RTC_DS3231_ALARM
+ *
+ * @return            - None
+ *
+ * @Note              - This function disable alarm in DS3231 RTC
+ */
+void rtc_alarm_disable(uint8_t alarm_num)
+{
+	uint8_t status_reg = 0;
 
+	// Default options in DS3231_STATUS register
+	status_reg |= DS3231_RTC_STATUS_A1F;
+	status_reg |= DS3231_RTC_STATUS_A2F;
+	status_reg |= DS3231_RTC_STATUS_EN32KHZ;
+	status_reg |= DS3231_RTC_STATUS_OSF;
+
+	if(alarm_num & DS3231_RTC_ALARM_1)
+	{
+		status_reg &= ~(DS3231_RTC_CTRL_A1IE);
+	}
+
+	if(alarm_num & DS3231_RTC_ALARM_2)
+	{
+		status_reg &= ~(DS3231_RTC_CTRL_A2IE);
+	}
+
+
+
+	rtc_write(DS3231_STATUS, status_reg);
+}
+
+/*
+ * @fn      		  - is_alarm_activeted
+ *
+ * @return            - param: @RTC_DS3231_ALARM
+ *
+ * @Note              - This function return:
+ * 						0 - neither alarms are activated
+ * 						1 - DS3231_RTC_ALARM_1 activated
+ * 						2 - DS3231_RTC_ALARM_2 activated
+ * 						3 - either alarms are activated
+ */
+uint8_t is_alarm_activeted(void)
+{
+	uint8_t status_reg = 0;
+	uint8_t activ_alarms = 0;
+	status_reg = rtc_read(DS3231_STATUS);
+
+	if(status_reg & DS3231_RTC_STATUS_A1F)
+	{
+		activ_alarms |= DS3231_RTC_ALARM_1;
+	}
+
+	if(status_reg & DS3231_RTC_STATUS_A2F)
+	{
+		activ_alarms |= DS3231_RTC_ALARM_2;
+	}
+
+	return activ_alarms;
+}
 
 
 
