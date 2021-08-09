@@ -3,11 +3,9 @@
 
 #include "main.h"
 
-void buzzer_init(uint8_t melody);
-void buzzer_start(void);
-void buzzer_stop(void);
-
-void buzzer_loop(void);
+void buzzer_init();
+void buzzer_set_melody(uint8_t melody);
+void buzzer_service(void);
 
 // User can set 3 buzzer melody. Param: @BUZZER_MELODY
 #define BUZZER_MELODY_1		0

@@ -7,16 +7,17 @@ uint8_t buzzer_melody;
 volatile uint8_t tim2_OC_IT = 0;
 volatile uint32_t buzzer_freq;
 
+static void buzzer_start(void);
+static void buzzer_stop(void);
+
 /*
  * @fn      		  - buzzer_init
  *
- * @param[in]         - melody - param: @BUZZER_MELODY
- *
  * @return            - None
  *
- * @Note              - This function init buzzer and set melody
+ * @Note              - Buzzer init function
  */
-void buzzer_init(uint8_t melody)
+void buzzer_init()
 {
 	/*
 	 * Timer 2 is initialized in OC mode
@@ -38,39 +39,31 @@ void buzzer_init(uint8_t melody)
 	{
 		error_handler();
 	}
-	buzzer_melody = melody;
+	buzzer_melody = BUZZER_MELODY_1;
 }
 
-void buzzer_change_melody(uint8_t melody)
+/*
+ * @fn      		  - buzzer_set_melody
+ *
+ * @param[in]         - melody - param: @BUZZER_MELODY
+ *
+ * @return            - None
+ *
+ * @Note              - Set buzzer melody
+ */
+void buzzer_set_melody(uint8_t melody)
 {
 	buzzer_melody = melody;
 }
 
-
-void buzzer_start(void)
-{
-	if(HAL_TIM_OC_Start_IT(&htimer2, TIM_CHANNEL_2) != HAL_OK)
-	{
-		error_handler();
-	}
-}
-
-void buzzer_stop(void)
-{
-
-
-	if(HAL_TIM_OC_Stop_IT(&htimer2, TIM_CHANNEL_2) != HAL_OK)
-	{
-		error_handler();
-	}
-
-
-}
-
-
-
-
-void buzzer_loop(void)
+/*
+ * @fn      		  - buzzer_service
+ *
+ * @return            - None
+ *
+ * @Note              - Function which service buzzer
+ */
+void buzzer_service(void)
 {
 	buzzer_freq = BUZZER_500HZ;
 
@@ -78,7 +71,7 @@ void buzzer_loop(void)
 
 	uint32_t time = HAL_GetTick();
 
-	while(time + 10000 >= HAL_GetTick())
+	while(HAL_GPIO_ReadPin(BUTTON_ACCEPT_PORT, BUTTON_ACCEPT_PIN) != GPIO_PIN_SET)
 	{
 		if(time + 7500 <= HAL_GetTick())
 		{
@@ -95,6 +88,30 @@ void buzzer_loop(void)
 	}
 	buzzer_stop();
 }
+
+
+
+
+static void buzzer_start(void)
+{
+	if(HAL_TIM_OC_Start_IT(&htimer2, TIM_CHANNEL_2) != HAL_OK)
+	{
+		error_handler();
+	}
+}
+
+static void buzzer_stop(void)
+{
+	if(HAL_TIM_OC_Stop_IT(&htimer2, TIM_CHANNEL_2) != HAL_OK)
+	{
+		error_handler();
+	}
+}
+
+
+
+
+
 
 
 void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
