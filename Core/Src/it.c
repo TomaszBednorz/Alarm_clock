@@ -3,6 +3,8 @@
 
 extern TIM_HandleTypeDef htimer2;
 
+extern DMA_HandleTypeDef hdma_tim3_ch1_trig;
+
 /**
   * @brief This function handles Non maskable interrupt.
   */
@@ -39,3 +41,13 @@ void TIM2_IRQHandler(void)
 	HAL_TIM_IRQHandler(&htimer2);
 }
 
+void DMA1_Channel4_5_6_7_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel4_5_6_7_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel4_5_6_7_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_tim3_ch1_trig);
+  /* USER CODE BEGIN DMA1_Channel4_5_6_7_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel4_5_6_7_IRQn 1 */
+}
