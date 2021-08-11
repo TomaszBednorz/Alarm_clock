@@ -65,26 +65,57 @@ void buzzer_set_melody(uint8_t melody)
  */
 void buzzer_service(void)
 {
-	buzzer_freq = BUZZER_500HZ;
+	buzzer_freq = BUZZER_250HZ;
 
 	buzzer_start();
 
 	uint32_t time = HAL_GetTick();
 
-	while(HAL_GPIO_ReadPin(BUTTON_ACCEPT_PORT, BUTTON_ACCEPT_PIN) != GPIO_PIN_SET)
+	while(1)
 	{
-		if(time + 7500 <= HAL_GetTick())
+		if(HAL_GPIO_ReadPin(BUTTON_ACCEPT_PORT, BUTTON_ACCEPT_PIN) == GPIO_PIN_RESET)
 		{
-			buzzer_freq = BUZZER_2000HZ;
+			break;
 		}
-		else if(time + 5000 <= HAL_GetTick())
+		else if(time + 4000 <= HAL_GetTick())
 		{
-			buzzer_freq = BUZZER_500HZ;
+			buzzer_freq = BUZZER_250HZ;
+			time = HAL_GetTick();
 		}
-		else if(time + 2500 <= HAL_GetTick())
+		else if(time + 3000 <= HAL_GetTick())
 		{
-			buzzer_freq = BUZZER_2000HZ;
+			if(buzzer_melody == BUZZER_MELODY_3)
+			{
+				buzzer_freq = BUZZER_2000HZ;
+			}
+			else if(buzzer_melody == BUZZER_MELODY_2)
+			{
+				buzzer_freq = BUZZER_1000HZ;
+			}
 		}
+		else if(time + 2000 <= HAL_GetTick())
+		{
+			if(buzzer_melody == BUZZER_MELODY_3 || buzzer_melody == BUZZER_MELODY_1)
+			{
+				buzzer_freq = BUZZER_1000HZ;
+			}
+			else if(buzzer_melody == BUZZER_MELODY_2)
+			{
+				buzzer_freq = BUZZER_250HZ;
+			}
+		}
+		else if(time + 1000 <= HAL_GetTick())
+		{
+			if(buzzer_melody == BUZZER_MELODY_3)
+			{
+				buzzer_freq = BUZZER_500HZ;
+			}
+			else if(buzzer_melody == BUZZER_MELODY_2)
+			{
+				buzzer_freq = BUZZER_1000HZ;
+			}
+		}
+
 	}
 	buzzer_stop();
 }
