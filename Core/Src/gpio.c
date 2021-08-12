@@ -1,5 +1,6 @@
 #include "gpio.h"
 
+uint8_t button_read(uint8_t button);
 
 void gpio_init()
 {
@@ -34,3 +35,55 @@ void gpio_init()
 	HAL_GPIO_Init(BUTTON_DOWN_PORT, &GPIO_buttons);
 
 }
+
+/*
+ * @fn      		  - button_read
+ *
+ * @param[in]         - button - param: @BUTTON_NUM
+ *
+ * @return            - param: @BUTTON_STATE
+ *
+ * @Note              - This function read state from GPIOs
+ */
+uint8_t button_read(uint8_t button)
+{
+	if(button == BUTTON_ACCEPT)
+	{
+		if(HAL_GPIO_ReadPin(BUTTON_ACCEPT_PORT, BUTTON_ACCEPT_PIN) == GPIO_PIN_RESET)
+		{
+			return BUTTON_PUSHED;
+		}
+	}
+	else if(button == BUTTON_LEFT)
+	{
+		if(HAL_GPIO_ReadPin(BUTTON_LEFT_PORT, BUTTON_LEFT_PIN) == GPIO_PIN_RESET)
+		{
+			return BUTTON_PUSHED;
+		}
+	}
+	else if(button == BUTTON_RIGHT)
+	{
+		if(HAL_GPIO_ReadPin(BUTTON_RIGHT_PORT, BUTTON_RIGHT_PIN) == GPIO_PIN_RESET)
+		{
+			return BUTTON_PUSHED;
+		}
+	}
+	else if(button == BUTTON_UP)
+	{
+		if(HAL_GPIO_ReadPin(BUTTON_UP_PORT, BUTTON_UP_PIN) == GPIO_PIN_RESET)
+		{
+			return BUTTON_PUSHED;
+		}
+	}
+	else if(button == BUTTON_DOWN)
+	{
+		if(HAL_GPIO_ReadPin(BUTTON_DOWN_PORT, BUTTON_DOWN_PIN) == GPIO_PIN_RESET)
+		{
+			return BUTTON_PUSHED;
+		}
+	}
+
+	return BUTTON_RELEASED;
+}
+
+

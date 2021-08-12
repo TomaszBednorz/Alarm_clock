@@ -17,12 +17,16 @@ Small home project of alarm clock, which contain some easy to do features. Proje
 - Buzzer
 - LED strip
 - Breadboard
+- 5 x NO (normal open) button
+- 5 x 100kOhms resistor 
 - Jumper wires
+
+
 
 ## TODO list
 - [x] RTC library
 - [x] LCD display library
 - [ ] LED strip  library
-- [ ] Buzzer library
+- [x] Buzzer library
 - [ ] Clock functionality implementation
 - [ ] Alarms functionality implementation
