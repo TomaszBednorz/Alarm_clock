@@ -1,0 +1,2 @@
+gpio.c:5:6:gpio_init	48	static
+gpio.c:48:9:button_read	16	static
