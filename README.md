@@ -26,7 +26,7 @@ Small home project of alarm clock, which contain some easy to do features. Proje
 ## TODO list
 - [x] RTC library
 - [x] LCD display library
-- [ ] LED strip  library
+- [x] LED strip  library
 - [x] Buzzer library
 - [ ] Clock functionality implementation
 - [ ] Alarms functionality implementation
