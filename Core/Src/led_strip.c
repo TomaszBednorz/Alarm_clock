@@ -50,7 +50,10 @@ void led_init(void)
 
 	buffer[RESET_CODE_LEN + LED_RGB_COLOR_LEN * LED_NUM + 1] = LINE_HIGH;
 
-	HAL_TIM_Base_Start(&htimer3);
+	if(HAL_TIM_Base_Start(&htimer3) != HAL_OK)
+	{
+		error_handler();
+	}
 }
 
 /*
@@ -114,7 +117,10 @@ void led_update_color(uint8_t led, uint8_t red, uint8_t green, uint8_t blue)
  */
 void led_send_color()
 {
-	HAL_TIM_PWM_Start_DMA(&htimer3, TIM_CHANNEL_1, (uint32_t*)buffer, sizeof(buffer));
+	if(HAL_TIM_PWM_Start_DMA(&htimer3, TIM_CHANNEL_1, (uint32_t*)buffer, sizeof(buffer)) != HAL_OK)
+	{
+		error_handler()	;
+	}
 }
 
 

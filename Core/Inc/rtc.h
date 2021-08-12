@@ -127,6 +127,10 @@ typedef struct
 }RTC_alarm;
 
 /*
+ *
+ */
+
+/*
  * Functions prototypes
  */
 void rtc_set_time(RTC_time *time);

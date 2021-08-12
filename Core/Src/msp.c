@@ -97,6 +97,14 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim)
     __HAL_LINKDMA(htim,hdma[TIM_DMA_ID_CC1],hdma_tim3_ch1_trig);
     __HAL_LINKDMA(htim,hdma[TIM_DMA_ID_TRIGGER],hdma_tim3_ch1_trig);
   }
+
+  if(htim->Instance == TIM6)
+  {
+	__HAL_RCC_TIM6_CLK_ENABLE();
+
+	HAL_NVIC_SetPriority(TIM6_DAC_IRQn, 2, 0);
+	HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
+  }
 }
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)

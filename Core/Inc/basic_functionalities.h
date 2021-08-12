@@ -6,7 +6,7 @@
 void error_handler(void);
 void clock_configuration(void);
 void DMA_init(void);
-
+void interrupt_1s_init(void);
 
 
 #endif /* INC_BASIC_FUNCTIONALITIES_H_ */

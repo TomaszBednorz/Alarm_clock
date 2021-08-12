@@ -42,6 +42,11 @@ extern I2C_HandleTypeDef hi2c1;
 
 #define LINE_LEN	16
 
+// Which line to update param: @LCD_UPDATE
+#define LINE_BOTH		(LINE_FIRST | LINE_SECOND)
+#define LINE_FIRST		1
+#define LINE_SECOND		2
+
 typedef struct
 {
 	bool backlight;
@@ -51,7 +56,8 @@ typedef struct
 
 void lcd_init(lcd_display* lcd);
 void lcd_clear(lcd_display* lcd);
-void lcd_update(lcd_display* lcd);
+void lcd_clear_and_update(lcd_display* lcd);
+void lcd_update(lcd_display* lcd, uint8_t line);
 
 
 

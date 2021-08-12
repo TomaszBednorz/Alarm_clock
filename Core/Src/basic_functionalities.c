@@ -1,5 +1,7 @@
 #include "basic_functionalities.h"
 
+TIM_HandleTypeDef htimer6;
+
 void DMA_init(void)
 {
   __HAL_RCC_DMA1_CLK_ENABLE();
@@ -39,6 +41,25 @@ void clock_configuration(void)
   {
 	  error_handler();
   }
+}
+
+/*
+ * Interrupt every 1s triggered by timer 6
+ */
+void interrupt_1s_init(void)
+{
+	htimer6.Instance = TIM6;
+	htimer6.Init.Prescaler = 3999;
+	htimer6.Init.Period = 9999;
+	if(HAL_TIM_Base_Init(&htimer6) != HAL_OK)
+	{
+		error_handler();
+	}
+
+	if(HAL_TIM_Base_Start_IT(&htimer6) != HAL_OK)
+	{
+		error_handler();
+	}
 }
 
 void error_handler(void)

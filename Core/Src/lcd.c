@@ -55,9 +55,16 @@ void lcd_clear(lcd_display* lcd)
 }
 
 /*
- * Function which sends information contained in lcd_display struct to lcd display
+ * @fn      		  - lcd_clear_and_update
+ *
+ * @param[in]         - lcd_clear_and_update structure
+ *
+ * @return            - None
+ *
+ * @Note              - Function which sends information contained in lcd_display struct to lcd display, but
+ * 						first clear display
  */
-void lcd_update(lcd_display* lcd)
+void lcd_clear_and_update(lcd_display* lcd)
 {
 	uint8_t bl = 0;
 	if(lcd->backlight)
@@ -77,5 +84,43 @@ void lcd_update(lcd_display* lcd)
 	for(int i = 0; i < fmin(strlen(lcd->line_2nd), LINE_LEN); i++)
 	{
 		lcd_write(lcd->line_2nd[i] , (bl | RS_PIN));
+	}
+}
+
+/*
+ * @fn      		  - lcd_clear_and_update
+ *
+ * @param[in]         - lcd_clear_and_update structure
+ * @param[in]         - line - param: @LCD_UPDATE
+ *
+ * @return            - None
+ *
+ * @Note              - Function which sends information contained in lcd_display struct to lcd display, without
+ * 						clearing display
+ */
+void lcd_update(lcd_display* lcd, uint8_t line)
+{
+	uint8_t bl = 0;
+	if(lcd->backlight)
+	{
+		bl = BL_PIN;
+	}
+
+	if(line & LINE_FIRST)
+	{
+		lcd_write(FIRST_LINE, bl);
+		for(int i = 0; i < fmin(strlen(lcd->line_1st), LINE_LEN); i++)
+		{
+			lcd_write(lcd->line_1st[i] , (bl | RS_PIN));
+		}
+	}
+
+	if(line & LINE_SECOND)
+	{
+		lcd_write(SECOND_LINE, bl);
+		for(int i = 0; i < fmin(strlen(lcd->line_2nd), LINE_LEN); i++)
+		{
+			lcd_write(lcd->line_2nd[i] , (bl | RS_PIN));
+		}
 	}
 }

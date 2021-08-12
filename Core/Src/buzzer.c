@@ -3,12 +3,8 @@
 TIM_HandleTypeDef htimer2;
 
 uint8_t buzzer_melody;
-
-volatile uint8_t tim2_OC_IT = 0;
 volatile uint32_t buzzer_freq;
 
-static void buzzer_start(void);
-static void buzzer_stop(void);
 
 /*
  * @fn      		  - buzzer_init
@@ -40,6 +36,7 @@ void buzzer_init()
 		error_handler();
 	}
 	buzzer_melody = BUZZER_MELODY_1;
+	buzzer_freq = BUZZER_250HZ;
 }
 
 /*
@@ -57,73 +54,13 @@ void buzzer_set_melody(uint8_t melody)
 }
 
 /*
- * @fn      		  - buzzer_service
+ * @fn      		  - buzzer_start
  *
  * @return            - None
  *
- * @Note              - Function which service buzzer
+ * @Note              - Buzzer start buzz
  */
-void buzzer_service(void)
-{
-	buzzer_freq = BUZZER_250HZ;
-
-	buzzer_start();
-
-	uint32_t time = HAL_GetTick();
-
-	while(1)
-	{
-		if(HAL_GPIO_ReadPin(BUTTON_ACCEPT_PORT, BUTTON_ACCEPT_PIN) == GPIO_PIN_RESET)
-		{
-			break;
-		}
-		else if(time + 4000 <= HAL_GetTick())
-		{
-			buzzer_freq = BUZZER_250HZ;
-			time = HAL_GetTick();
-		}
-		else if(time + 3000 <= HAL_GetTick())
-		{
-			if(buzzer_melody == BUZZER_MELODY_3)
-			{
-				buzzer_freq = BUZZER_2000HZ;
-			}
-			else if(buzzer_melody == BUZZER_MELODY_2)
-			{
-				buzzer_freq = BUZZER_1000HZ;
-			}
-		}
-		else if(time + 2000 <= HAL_GetTick())
-		{
-			if(buzzer_melody == BUZZER_MELODY_3 || buzzer_melody == BUZZER_MELODY_1)
-			{
-				buzzer_freq = BUZZER_1000HZ;
-			}
-			else if(buzzer_melody == BUZZER_MELODY_2)
-			{
-				buzzer_freq = BUZZER_250HZ;
-			}
-		}
-		else if(time + 1000 <= HAL_GetTick())
-		{
-			if(buzzer_melody == BUZZER_MELODY_3)
-			{
-				buzzer_freq = BUZZER_500HZ;
-			}
-			else if(buzzer_melody == BUZZER_MELODY_2)
-			{
-				buzzer_freq = BUZZER_1000HZ;
-			}
-		}
-
-	}
-	buzzer_stop();
-}
-
-
-
-
-static void buzzer_start(void)
+void buzzer_start(void)
 {
 	if(HAL_TIM_OC_Start_IT(&htimer2, TIM_CHANNEL_2) != HAL_OK)
 	{
@@ -131,17 +68,20 @@ static void buzzer_start(void)
 	}
 }
 
-static void buzzer_stop(void)
+/*
+ * @fn      		  - buzzer_stop
+ *
+ * @return            - None
+ *
+ * @Note              - Buzzer stop buzz
+ */
+void buzzer_stop(void)
 {
 	if(HAL_TIM_OC_Stop_IT(&htimer2, TIM_CHANNEL_2) != HAL_OK)
 	{
 		error_handler();
 	}
 }
-
-
-
-
 
 
 
