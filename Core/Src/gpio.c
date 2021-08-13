@@ -5,6 +5,7 @@ uint8_t button_read(uint8_t button);
 void gpio_init()
 {
 	GPIO_InitTypeDef GPIO_buttons = {0};
+	GPIO_InitTypeDef GPIO_led = {0};
 	/*
 	 * PA12 --> BUTTON_ACCEPT
 	 * PA11 --> LEFT_BUTTON
@@ -33,7 +34,14 @@ void gpio_init()
 
 	GPIO_buttons.Pin = BUTTON_DOWN_PIN;
 	HAL_GPIO_Init(BUTTON_DOWN_PORT, &GPIO_buttons);
-
+	/*
+	 * PA6 --> RED_LED
+	 */
+	GPIO_led.Pin = RED_LED_PIN;
+	GPIO_led.Pull = GPIO_NOPULL;
+	GPIO_led.Speed = GPIO_SPEED_FREQ_MEDIUM;
+	GPIO_led.Mode = GPIO_MODE_OUTPUT_PP;
+	HAL_GPIO_Init(RED_LED_PORT, &GPIO_led);
 }
 
 /*

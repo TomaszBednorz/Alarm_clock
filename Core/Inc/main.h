@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include "basic_functionalities.h"
 #include "i2c.h"
@@ -14,7 +15,6 @@
 #include "rtc.h"
 #include "buzzer.h"
 #include "gpio.h"
-#include "led_strip.h"
 #include "interface.h"
 
 

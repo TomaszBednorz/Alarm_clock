@@ -24,6 +24,9 @@ uint8_t button_read(uint8_t button);
 #define BUTTON_UP_PIN			GPIO_PIN_11
 #define BUTTON_DOWN_PORT		GPIOC
 #define BUTTON_DOWN_PIN			GPIO_PIN_8
+#define RED_LED_PORT			GPIOA
+#define RED_LED_PIN				GPIO_PIN_6
+
 
 // Button states param: @BUTTON_STATE
 #define BUTTON_RELEASED			0

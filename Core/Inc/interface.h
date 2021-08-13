@@ -15,7 +15,7 @@
 #define STATE_LED		4
 #define STATE_EXIT		5
 
-// Sub states in main_menu sub functions (eg. set_date_time)
+// Sub states in main_menu sub function (set_date_time, set_alarm)
 #define STATE_DATE		0
 #define STATE_MONTH		1
 #define STATE_YEAR		2
@@ -24,10 +24,15 @@
 #define STATE_MINUTES	5
 #define STATE_SECONDS	6
 
+// Sub states in main_menu sub function (set_alarm)
+
+#define ALARM_STATE_HOURS		0
+#define ALARM_STATE_MINUTES		1
+#define ALARM_STATE_DAY			2
 
 void time_date_actualization(bool strict_update);
 void main_menu(void);
-void set_date_time(void);
+void alarm_service(void);
 
 
 #endif /* INC_INTERFACE_H_ */

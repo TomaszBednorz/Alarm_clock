@@ -21,47 +21,29 @@ int main(void)
 	lcd_init(&display);
 	lcd_clear_and_update(&display);
 	DMA_init();
-	led_init();
 	interrupt_1s_init();
 	// Basic initializations - END
 
 	// Default initialization - START
+
+	HAL_GPIO_WritePin(RED_LED_PORT, RED_LED_PIN, GPIO_PIN_RESET);  //Disable RED LED
+
+	// Default clock parameters
 	display.backlight = 1;
-	date.day = 1;
+	date.day = DS3231_RTC_MONDAY;
 	date.date = 1;
 	date.month = 1;
 	date.year = 10;
-
 	rtc_set_time(&time);
 	rtc_set_date(&date);
-
 	time_date_actualization(STRICT_UPDATE_TRUE);
-
 	// Default initialization - END
-
-
-
-
-
-	//	buzzer_service();
-
-
 
 
 
 	while (1)
 	{
 
-//		uint8_t r = rand();
-//		uint8_t g = rand();
-//		uint8_t b = rand();
-//
-//		for (int led = 0; led < 8; led++)
-//		{
-//			led_update_color(led, r, g, b);
-//			led_send_color();
-//			HAL_Delay(100);
-//		}
 
 		uint32_t current_time = HAL_GetTick();
 		while(button_read(BUTTON_ACCEPT) == BUTTON_PUSHED)
@@ -73,17 +55,14 @@ int main(void)
 			}
 		}
 
-
 		if(IT_every_1s)
 		{
 			time_date_actualization(STRICT_UPDATE_FALSE);
+			alarm_service();
 			IT_every_1s = 0;
 		}
 
 	}
-
-
-
 }
 
 
