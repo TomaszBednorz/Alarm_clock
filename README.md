@@ -1,7 +1,7 @@
 # Alarm_clock
 
 ## Description
-Small home project of alarm clock, which contain some easy to do features. Project is written in STM32CubeIDE, without CubeMX code generator. 
+Small home project of alarm clock, which contains some easy to do features. Project is written in STM32CubeIDE, without CubeMX code generator. 
 
 ## Functionality
 - User can read current date and time from LCD display
@@ -16,11 +16,9 @@ Small home project of alarm clock, which contain some easy to do features. Proje
 - I2C converter to HD44780 (PCF8574)
 - Buzzer
 - Breadboard
-- 5 x NO (normal open) button
-- 5 x 100kOhms resistor 
+- 5 x NO (normal open) buttons
+- 5 x 100kOhms resistors
 - Jumper wires
-
-
 
 ## TODO list
 - [x] RTC library
@@ -29,4 +27,4 @@ Small home project of alarm clock, which contain some easy to do features. Proje
 - [x] Clock functionality implementation
 - [x] Alarms functionality implementation
 - [x] Led && Buzzer functionality implementation
-- [ ] Comments actualization && bug revision
+- [x] Comments actualization && bug revision

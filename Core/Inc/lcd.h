@@ -19,7 +19,7 @@ extern I2C_HandleTypeDef hi2c1;
 #define LCD_I2C_HANDLE 	hi2c1
 #define LCD_I2C_ADDR 	(0x27 << 1)
 
-// Pind in LCD
+// Pins in LCD
 #define RS_PIN			0x1
 #define RW_PIN			0x2
 #define EN_PIN			0x4
@@ -47,12 +47,14 @@ extern I2C_HandleTypeDef hi2c1;
 #define LINE_FIRST		1
 #define LINE_SECOND		2
 
+// LCD struct
 typedef struct
 {
 	bool backlight;
 	char line_1st[17];
 	char line_2nd[17];
 }lcd_display;
+
 
 void lcd_init(lcd_display* lcd);
 void lcd_clear(lcd_display* lcd);

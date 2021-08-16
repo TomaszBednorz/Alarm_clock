@@ -16,16 +16,18 @@ extern uint8_t buzzer_melody;
 extern volatile uint32_t buzzer_freq;
 
 // Led  variables
-uint8_t led_sequence = 1;
+uint8_t led_sequence = 1; // Led sequence from 1 to 2
 
 
-static uint32_t num_of_sequence = 0; // Led and buzzer helper variable
+static uint32_t num_of_iteration = 0; // Led and buzzer helper variable
 
-uint8_t current_state;
-uint8_t current_substate;
+uint8_t current_state;  	// This variable storage current state in main_menu() function. Param: @CURRENT_STATE
+uint8_t current_substate;	// This variable storage current sub state in main_menu() function. Param: @CURRENT_SUBSTATE
 
+// Helper tables
 static char* rtc_month_roman[12] = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII" };
 static char* rtc_day_str[7] = { "SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT" };
+static uint8_t day_in_month[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 /*
  * Static function prototypes
@@ -112,12 +114,16 @@ void time_date_actualization(bool strict_update)
 }
 
 /*
- * Main menu (heart of application)
+ * @fn      		  - main_menu
+ *
+ * @return            - None
+ *
+ * @Note              - Heart of appliaction
  */
 void main_menu(void)
 {
 	bool end_main_menu_loop = false;
-	current_state = 0;
+	current_state = STATE_DATE_TIME;
 
 	static char* menu_options[6] = {"<-  SET TIME  ->", "<- SET ALARM1 ->", "<- SET ALARM2 ->", "<- SET BUZZER ->",
 								   "<-  SET  LED  ->", "<-    EXIT    ->"};
@@ -126,30 +132,30 @@ void main_menu(void)
 	sprintf(display.line_2nd, menu_options[current_state]);
 	lcd_clear_and_update(&display);
 
-	HAL_Delay(200); // debouncing protection
+	HAL_Delay(200); // debouncing protection and break after click
 
-	while(end_main_menu_loop != true)
+	while(end_main_menu_loop != true) // main menu loop
 	{
 		if(button_read(BUTTON_RIGHT) == BUTTON_PUSHED)
 		{
-			if(current_state <= 4)
+			if(current_state < STATE_EXIT)
 			{
 				current_state++;
 				sprintf(display.line_2nd, menu_options[current_state]);
 				lcd_update(&display, LINE_SECOND);
-				HAL_Delay(100); // debouncing protection
+				HAL_Delay(100); // debouncing protection and break after click
 			}
 		}
 
 		if(button_read(BUTTON_LEFT) == BUTTON_PUSHED)
 		{
-			if(current_state >= 1)
+			if(current_state > STATE_DATE_TIME)
 			{
 				current_state--;
 				sprintf(display.line_1st, "   MAIN  MENU   ");
 				sprintf(display.line_2nd, menu_options[current_state]);
 				lcd_update(&display, LINE_SECOND);
-				HAL_Delay(100); // debouncing protection
+				HAL_Delay(100); // debouncing protection and break after click
 			}
 		}
 
@@ -184,7 +190,76 @@ void main_menu(void)
 				sprintf(display.line_2nd, menu_options[current_state]);
 				lcd_clear_and_update(&display);
 			}
-			HAL_Delay(200); // debouncing protection
+			HAL_Delay(200); // debouncing protection and break after click
+		}
+	}
+}
+
+/*
+ * @fn      		  - alarm_service
+ *
+ * @return            - None
+ *
+ * @Note              - This function services alarms
+ */
+void alarm_service(void)
+{
+	bool end_alarm_service_loop = false;
+	uint8_t active_alarms = is_alarm_activeted();
+
+	if(active_alarms)
+	{
+		if(active_alarms == DS3231_RTC_ALARM_1)
+		{
+			sprintf(display.line_1st, "ALARM 1    %d:%d", alarm_1.hours, alarm_1.minutes);
+		}
+		else if(active_alarms == DS3231_RTC_ALARM_2)
+		{
+			sprintf(display.line_1st, "ALARM 2    %d:%d", alarm_2.hours, alarm_2.minutes);
+		}
+
+		sprintf(display.line_2nd, "CLICK BUTTON !!!");
+		lcd_clear_and_update(&display);
+
+
+		uint32_t time = HAL_GetTick();
+
+		buzzer_service();
+		led_service();
+		buzzer_start();
+
+
+		while(end_alarm_service_loop != true)
+		{
+
+			if(time + 300 <= HAL_GetTick())
+			{
+				time = HAL_GetTick();
+
+				num_of_iteration++; // update variable every 300ms
+				buzzer_service();
+				led_service();
+
+			}
+
+			if(button_read(BUTTON_ACCEPT) == BUTTON_PUSHED) // Turn off alarm
+			{
+				buzzer_stop();
+				HAL_GPIO_WritePin(RED_LED_PORT, RED_LED_PIN, GPIO_PIN_RESET);
+				end_alarm_service_loop = true;
+
+				if(active_alarms == DS3231_RTC_ALARM_1)
+				{
+					rtc_alarm_disable(DS3231_RTC_ALARM_1);
+				}
+				else if(active_alarms == DS3231_RTC_ALARM_2)
+				{
+					rtc_alarm_disable(DS3231_RTC_ALARM_2);
+				}
+
+				time_date_actualization(STRICT_UPDATE_TRUE);
+
+			}
 		}
 	}
 }
@@ -194,14 +269,8 @@ void main_menu(void)
  */
 static void set_date_time(void)
 {
-	date.date = 1;
-	date.month = DS3231_RTC_JANUARY;
-	date.year = 10;
-	date.day = DS3231_RTC_MONDAY;
-
-	time.hours = 0;
-	time.minutes = 0;
-	time.seconds = 0;
+	date = rtc_get_date();
+	time = rtc_get_time();
 
 	sprintf(display.line_1st, "    SET DATE    ");
 	sprintf(display.line_2nd, "%d.%s.20%dr %s", date.date, rtc_month_roman[date.month - 1], date.year, rtc_day_str[date.day - 1]);
@@ -211,7 +280,7 @@ static void set_date_time(void)
 
 	bool end_date_time_loop = false;
 
-	HAL_Delay(200); // debouncing protection
+	HAL_Delay(200); // debouncing protection and break after click
 
 	while(end_date_time_loop != true)
 	{
@@ -219,11 +288,11 @@ static void set_date_time(void)
 		{
 			switch (current_substate) {
 				case STATE_DATE:
-					if(date.date < 31)
+					if(date.date < day_in_month[date.month - 1])
 					{
 						date.date++;
 					}
-					else if(date.date == 31)
+					else if(date.date >= day_in_month[date.month - 1])
 					{
 						date.date = 1;
 					}
@@ -262,9 +331,9 @@ static void set_date_time(void)
 					break;
 			}
 
-			sprintf(display.line_2nd, "%d.%s.20%dr %s", date.date, rtc_month_roman[date.month - 1], date.year, rtc_day_str[date.day - 1]);
+			sprintf(display.line_2nd, "%d.%s.20%d %s", date.date, rtc_month_roman[date.month - 1], date.year, rtc_day_str[date.day - 1]);
 			lcd_clear_and_update(&display);
-			HAL_Delay(100); // debouncing protection
+			HAL_Delay(50); // debouncing protection and break after click
 
 		}
 
@@ -278,7 +347,7 @@ static void set_date_time(void)
 					}
 					else if(date.date == 1)
 					{
-						date.date = 31;
+						date.date = day_in_month[date.month - 1];
 					}
 					break;
 				case STATE_MONTH:
@@ -315,26 +384,26 @@ static void set_date_time(void)
 					break;
 			}
 
-			sprintf(display.line_2nd, "%d.%s.20%dr %s", date.date, rtc_month_roman[date.month - 1], date.year, rtc_day_str[date.day - 1]);
+			sprintf(display.line_2nd, "%d.%s.20%d %s", date.date, rtc_month_roman[date.month - 1], date.year, rtc_day_str[date.day - 1]);
 			lcd_clear_and_update(&display);
-			HAL_Delay(100); // debouncing protection
+			HAL_Delay(50); // debouncing protection and break after click
 		}
 
 		if(button_read(BUTTON_RIGHT) == BUTTON_PUSHED)
 		{
-			if(current_substate < 3)
+			if(current_substate < STATE_DAY)
 			{
 				current_substate++;
-				HAL_Delay(200); // debouncing protection
+				HAL_Delay(200); // debouncing protection and break after click
 			}
 		}
 
 		if(button_read(BUTTON_LEFT) == BUTTON_PUSHED)
 		{
-			if(current_substate > 0)
+			if(current_substate > STATE_DATE)
 			{
 				current_substate--;
-				HAL_Delay(200); // debouncing protection
+				HAL_Delay(200); // debouncing protection and break after click
 			}
 		}
 
@@ -389,9 +458,9 @@ static void set_date_time(void)
 							break;
 					}
 
-					sprintf(display.line_2nd, "    %d:%d:%d", time.hours, time.minutes, time.seconds);
+					sprintf(display.line_2nd, "    %d:%d:%d   ", time.hours, time.minutes, time.seconds);
 					lcd_update(&display, LINE_SECOND);
-					HAL_Delay(100); // debouncing protection
+					HAL_Delay(50); // debouncing protection and break after click
 
 				}
 
@@ -433,25 +502,25 @@ static void set_date_time(void)
 					}
 					sprintf(display.line_2nd, "    %d:%d:%d", time.hours, time.minutes, time.seconds);
 					lcd_update(&display, LINE_SECOND);
-					HAL_Delay(100); // debouncing protection
+					HAL_Delay(50); // debouncing protection and break after click
 
 				}
 
 				if(button_read(BUTTON_RIGHT) == BUTTON_PUSHED)
 				{
-					if(current_substate < 6)
+					if(current_substate < STATE_SECONDS)
 					{
 						current_substate++;
-						HAL_Delay(200); // debouncing protection
+						HAL_Delay(200); // debouncing protection and break after click
 					}
 				}
 
 				if(button_read(BUTTON_LEFT) == BUTTON_PUSHED)
 				{
-					if(current_substate > 4)
+					if(current_substate > STATE_HOURS)
 					{
 						current_substate--;
-						HAL_Delay(200); // debouncing protection
+						HAL_Delay(200); // debouncing protection and break after click
 					}
 				}
 
@@ -467,15 +536,13 @@ static void set_date_time(void)
 	}
 }
 
-
+/*
+ * Function which setting alarm (available in main menu)
+ */
 static void set_alarm(RTC_alarm alarm, uint8_t alarm_num)
 {
 	current_substate = ALARM_STATE_HOURS;
 	bool end_alarm_loop = false;
-
-	alarm.minutes = 0;
-	alarm.hours = 0;
-	alarm.day = DS3231_RTC_MONDAY;
 
 	if(alarm_num == DS3231_RTC_ALARM_1)
 	{
@@ -487,7 +554,7 @@ static void set_alarm(RTC_alarm alarm, uint8_t alarm_num)
 
 	sprintf(display.line_2nd, "   %d:%d %s", alarm.hours, alarm.minutes, rtc_day_str[alarm.day - 1]);
 	lcd_clear_and_update(&display);
-	HAL_Delay(200); // debouncing protection
+	HAL_Delay(200); // debouncing protection and break after click
 
 	while(end_alarm_loop != true)
 	{
@@ -530,7 +597,7 @@ static void set_alarm(RTC_alarm alarm, uint8_t alarm_num)
 			}
 			sprintf(display.line_2nd, "   %d:%d %s", alarm.hours, alarm.minutes, rtc_day_str[alarm.day - 1]);
 			lcd_clear_and_update(&display);
-			HAL_Delay(100); // debouncing protection
+			HAL_Delay(50); // debouncing protection and break after click
 		}
 
 		if(button_read(BUTTON_DOWN) == BUTTON_PUSHED)
@@ -571,24 +638,24 @@ static void set_alarm(RTC_alarm alarm, uint8_t alarm_num)
 			}
 			sprintf(display.line_2nd, "   %d:%d %s", alarm.hours, alarm.minutes, rtc_day_str[alarm.day - 1]);
 			lcd_clear_and_update(&display);
-			HAL_Delay(100); // debouncing protection
+			HAL_Delay(50); // debouncing protection and break after click
 		}
 
 		if(button_read(BUTTON_RIGHT) == BUTTON_PUSHED)
 		{
-			if(current_substate < 2)
+			if(current_substate < ALARM_STATE_DAY)
 			{
 				current_substate++;
-				HAL_Delay(200); // debouncing protection
+				HAL_Delay(200); // debouncing protection and break after click
 			}
 		}
 
 		if(button_read(BUTTON_LEFT) == BUTTON_PUSHED)
 		{
-			if(current_substate > 0)
+			if(current_substate > ALARM_STATE_HOURS)
 			{
 				current_substate--;
-				HAL_Delay(200); // debouncing protection
+				HAL_Delay(200); // debouncing protection and break after click
 			}
 		}
 
@@ -601,39 +668,39 @@ static void set_alarm(RTC_alarm alarm, uint8_t alarm_num)
 	}
 }
 
+/*
+ * Function which setting type of buzzer melody (available in main menu)
+ */
 static void set_buzzer(void)
 {
 	bool end_buzzer_loop = false;
 
-	buzzer_melody = BUZZER_MELODY_1;
-
-
 	sprintf(display.line_1st, "   SET BUZZER   ");
 	sprintf(display.line_2nd, "<-BUZ MELODY %d->", buzzer_melody);
 	lcd_clear_and_update(&display);
-	HAL_Delay(200); // debouncing protection
+	HAL_Delay(200); // debouncing protection and break after click
 
 	while(end_buzzer_loop != true)
 	{
 		if(button_read(BUTTON_RIGHT) == BUTTON_PUSHED)
 		{
-			if(buzzer_melody < 2)
+			if(buzzer_melody < BUZZER_MELODY_3)
 			{
 				buzzer_melody++;
 				sprintf(display.line_2nd, "<-BUZ MELODY %d->", buzzer_melody);
 				lcd_update(&display, LINE_SECOND);
-				HAL_Delay(100); // debouncing protection
+				HAL_Delay(100); // debouncing protection and break after click
 			}
 		}
 
 		if(button_read(BUTTON_LEFT) == BUTTON_PUSHED)
 		{
-			if(buzzer_melody > 1)
+			if(buzzer_melody > BUZZER_MELODY_1)
 			{
 				buzzer_melody--;
 				sprintf(display.line_2nd, "<-BUZ MELODY %d->", buzzer_melody);
 				lcd_update(&display, LINE_SECOND);
-				HAL_Delay(100); // debouncing protection
+				HAL_Delay(100); // debouncing protection and break after click
 			}
 		}
 
@@ -644,6 +711,9 @@ static void set_buzzer(void)
 	}
 }
 
+/*
+ * Function which setting type of led sequence (available in main menu)
+ */
 static void set_led(void)
 {
 	bool end_led_loop = false;
@@ -654,7 +724,7 @@ static void set_led(void)
 	sprintf(display.line_1st, "SET LED SEQUENCE");
 	sprintf(display.line_2nd, "<- LED SEQ %d ->", led_sequence);
 	lcd_clear_and_update(&display);
-	HAL_Delay(200); // debouncing protection
+	HAL_Delay(200); // debouncing protection and break after click
 
 	while(end_led_loop != true)
 	{
@@ -665,7 +735,7 @@ static void set_led(void)
 				led_sequence++;
 				sprintf(display.line_2nd, "<- LED SEQ %d ->", led_sequence);
 				lcd_update(&display, LINE_SECOND);
-				HAL_Delay(100); // debouncing protection
+				HAL_Delay(100); // debouncing protection and break after click
 			}
 		}
 
@@ -676,7 +746,7 @@ static void set_led(void)
 				led_sequence--;
 				sprintf(display.line_2nd, "<- LED SEQ %d ->", led_sequence);
 				lcd_update(&display, LINE_SECOND);
-				HAL_Delay(100); // debouncing protection
+				HAL_Delay(100); // debouncing protection and break after click
 			}
 		}
 
@@ -687,72 +757,12 @@ static void set_led(void)
 	}
 }
 
-
-void alarm_service(void)
-{
-	bool end_alarm_service_loop = false;
-	uint8_t active_alarms = is_alarm_activeted();
-
-	if(active_alarms)
-	{
-		if(active_alarms == DS3231_RTC_ALARM_1)
-		{
-			sprintf(display.line_1st, "    ALARM  1");
-		}
-		else if(active_alarms == DS3231_RTC_ALARM_2)
-		{
-			sprintf(display.line_1st, "    ALARM  2");
-		}
-
-		sprintf(display.line_2nd, "CLICK BUTTON !!!");
-		lcd_clear_and_update(&display);
-
-
-		uint32_t time = HAL_GetTick();
-
-		buzzer_service();
-		led_service();
-		buzzer_start();
-
-
-		while(end_alarm_service_loop != true)
-		{
-
-			if(time + 500 <= HAL_GetTick())
-			{
-				time = HAL_GetTick();
-
-				num_of_sequence++;
-				buzzer_service();
-				led_service();
-
-			}
-
-			if(button_read(BUTTON_ACCEPT) == BUTTON_PUSHED)
-			{
-				buzzer_stop();
-				HAL_GPIO_WritePin(RED_LED_PORT, RED_LED_PIN, GPIO_PIN_RESET);
-				end_alarm_service_loop = true;
-
-				if(active_alarms == DS3231_RTC_ALARM_1)
-				{
-					rtc_alarm_disable(DS3231_RTC_ALARM_1);
-				}
-				else if(active_alarms == DS3231_RTC_ALARM_2)
-				{
-					rtc_alarm_disable(DS3231_RTC_ALARM_2);
-				}
-
-				time_date_actualization(STRICT_UPDATE_TRUE);
-
-			}
-		}
-	}
-}
-
+/*
+ * Function which service led in alarm_service()
+ */
 static void led_service()
 {
-	if(num_of_sequence % 2 == 0 && led_sequence == 1)
+	if(num_of_iteration % 2 == 0 && led_sequence == 1)
 	{
 		HAL_GPIO_TogglePin(RED_LED_PORT, RED_LED_PIN);
 	}
@@ -762,31 +772,36 @@ static void led_service()
 	}
 }
 
-
-
+/*
+ * Function which services buzzer in alarm_service()
+ */
 static void buzzer_service(void)
 {
-	if(num_of_sequence % 2 == 0 && buzzer_melody == 1)
+	if(num_of_iteration % 2 == 0 && buzzer_melody == 1)
 	{
 		buzzer_freq = BUZZER_250HZ;
 	}
-	else if(num_of_sequence % 2 == 1 && buzzer_melody == 1)
+	else if(num_of_iteration % 2 == 1 && buzzer_melody == 1)
 	{
 		buzzer_freq = BUZZER_500HZ;
 	}
 
-	if(num_of_sequence % 3 == 0 && buzzer_melody == 2)
+	if(num_of_iteration % 3 == 0 && buzzer_melody == 2)
 	{
 		buzzer_freq = BUZZER_250HZ;
 	}
-	else if(num_of_sequence % 3 == 1 && buzzer_melody == 2)
+	else if(num_of_iteration % 3 == 1 && buzzer_melody == 2)
 	{
 		buzzer_freq = BUZZER_500HZ;
 	}
-	else if(num_of_sequence % 3 == 2 && buzzer_melody == 2)
+	else if(num_of_iteration % 3 == 2 && buzzer_melody == 2)
 	{
 		buzzer_freq = BUZZER_1000HZ;
 	}
 
+	if(num_of_iteration % 2 == 0 && buzzer_melody == 3)
+	{
+		buzzer_freq = BUZZER_500HZ;
+	}
 
 }

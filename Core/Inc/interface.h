@@ -15,7 +15,7 @@
 #define STATE_LED		4
 #define STATE_EXIT		5
 
-// Sub states in main_menu sub function (set_date_time, set_alarm)
+// Sub states in main_menu sub function (set_date_time, set_alarm). Param: @CURRENT_STATE
 #define STATE_DATE		0
 #define STATE_MONTH		1
 #define STATE_YEAR		2
@@ -24,8 +24,7 @@
 #define STATE_MINUTES	5
 #define STATE_SECONDS	6
 
-// Sub states in main_menu sub function (set_alarm)
-
+// Sub states in main_menu sub function (set_alarm). Param: @CURRENT_SUBSTATE
 #define ALARM_STATE_HOURS		0
 #define ALARM_STATE_MINUTES		1
 #define ALARM_STATE_DAY			2

@@ -2,8 +2,8 @@
 
 TIM_HandleTypeDef htimer2;
 
-uint8_t buzzer_melody;
-volatile uint32_t buzzer_freq;
+uint8_t buzzer_melody;			// This variable storage number of buzzer melody. Param: @BUZZER_MELODY
+volatile uint32_t buzzer_freq;	// This variable storage number of buzzer frequency. Param: @BUZZER_FREQUENCY
 
 
 /*
@@ -11,7 +11,7 @@ volatile uint32_t buzzer_freq;
  *
  * @return            - None
  *
- * @Note              - Buzzer init function
+ * @Note              - Buzzer initialization function
  */
 void buzzer_init()
 {
@@ -35,6 +35,10 @@ void buzzer_init()
 	{
 		error_handler();
 	}
+
+	/*
+	 * Basic setting of buzzer melody and frequency
+	 */
 	buzzer_melody = BUZZER_MELODY_1;
 	buzzer_freq = BUZZER_250HZ;
 }
@@ -83,8 +87,9 @@ void buzzer_stop(void)
 	}
 }
 
-
-
+/*
+ * This callback is responsible for different frequency of buzzer melody (buzzer_freq variable inside)
+ */
 void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	uint32_t crr_content;

@@ -214,7 +214,9 @@ uint8_t is_alarm_activeted(void)
 
 
 
-
+/*
+ * Function which helps transmit data to RTC
+ */
 static void rtc_write(uint8_t reg, uint8_t data)
 {
 	if(HAL_I2C_Mem_Write(&DS3231_RTC_I2C_HANDLE, DS3231_RTC_I2C_ADDR, reg, 1, &data, 1, HAL_MAX_DELAY) != HAL_OK)
@@ -223,7 +225,9 @@ static void rtc_write(uint8_t reg, uint8_t data)
 	}
 }
 
-
+/*
+ * Function which helps read data from RTC
+ */
 static uint8_t rtc_read(uint8_t reg)
 {
 	uint8_t rx_data;
@@ -236,6 +240,9 @@ static uint8_t rtc_read(uint8_t reg)
 	return rx_data;
 }
 
+/*
+ * Function which converts BCD (Binary Coded Decimal) numbers to binary
+ */
 static uint8_t bcd_to_bin(uint8_t bcd_number)
 {
 	uint8_t unity = bcd_number & 0x0F;
@@ -244,6 +251,9 @@ static uint8_t bcd_to_bin(uint8_t bcd_number)
 	return dozens + unity;
 }
 
+/*
+ * Function which converts binary numbers to BCD (Binary Coded Decimal)
+ */
 static uint8_t bin_to_bcd(uint8_t bin_number)
 {
 	uint8_t unity = 0;

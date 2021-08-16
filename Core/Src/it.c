@@ -37,6 +37,10 @@ void SysTick_Handler(void)
 }
 
 
+/*
+ * IRQ Handlers
+ */
+
 void TIM2_IRQHandler(void)
 {
 	HAL_TIM_IRQHandler(&htimer2);
@@ -47,10 +51,3 @@ void TIM6_DAC_IRQHandler(void)
 	HAL_TIM_IRQHandler(&htimer6);
 }
 
-
-void DMA1_Channel4_5_6_7_IRQHandler(void)
-{
-
-  HAL_DMA_IRQHandler(&hdma_tim3_ch1_trig);
-
-}

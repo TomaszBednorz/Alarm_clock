@@ -1,7 +1,5 @@
 #include "main.h"
 
-DMA_HandleTypeDef hdma_tim3_ch1_trig;
-
 void HAL_MspInit(void)
 {
   __HAL_RCC_SYSCFG_CLK_ENABLE();
@@ -76,28 +74,6 @@ void HAL_TIM_OC_MspInit(TIM_HandleTypeDef *htim)
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim)
 {
-  if(htim->Instance == TIM3)
-  {
-
-    __HAL_RCC_TIM3_CLK_ENABLE();
-
-    hdma_tim3_ch1_trig.Instance = DMA1_Channel4;
-    hdma_tim3_ch1_trig.Init.Direction = DMA_MEMORY_TO_PERIPH;
-    hdma_tim3_ch1_trig.Init.PeriphInc = DMA_PINC_DISABLE;
-    hdma_tim3_ch1_trig.Init.MemInc = DMA_MINC_ENABLE;
-    hdma_tim3_ch1_trig.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
-    hdma_tim3_ch1_trig.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    hdma_tim3_ch1_trig.Init.Mode = DMA_NORMAL;
-    hdma_tim3_ch1_trig.Init.Priority = DMA_PRIORITY_LOW;
-    if (HAL_DMA_Init(&hdma_tim3_ch1_trig) != HAL_OK)
-    {
-    	error_handler();
-    }
-
-    __HAL_LINKDMA(htim,hdma[TIM_DMA_ID_CC1],hdma_tim3_ch1_trig);
-    __HAL_LINKDMA(htim,hdma[TIM_DMA_ID_TRIGGER],hdma_tim3_ch1_trig);
-  }
-
   if(htim->Instance == TIM6)
   {
 	__HAL_RCC_TIM6_CLK_ENABLE();
@@ -105,26 +81,4 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim)
 	HAL_NVIC_SetPriority(TIM6_DAC_IRQn, 2, 0);
 	HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
   }
-}
-
-void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
-{
-
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
-  if(htim->Instance == TIM3)
-  {
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-
-    /*
-     * PA6 --> TIM3_CH1
-    */
-
-    GPIO_InitStruct.Pin = GPIO_PIN_6;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = GPIO_AF1_TIM3;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-  }
-
 }

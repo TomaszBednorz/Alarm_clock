@@ -11,7 +11,10 @@ void buzzer_stop(void);
 // User can set 3 buzzer melody. Param: @BUZZER_MELODY
 #define BUZZER_MELODY_1		1
 #define BUZZER_MELODY_2		2
+#define BUZZER_MELODY_3		3
 
+
+// Different frequencies of buzzer. Param: @BUZZER_FREQUENCY
 #define BUZZER_250HZ		2000
 #define BUZZER_500HZ		1000
 #define BUZZER_1000HZ		500

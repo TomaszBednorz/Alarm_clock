@@ -2,16 +2,6 @@
 
 TIM_HandleTypeDef htimer6;
 
-void DMA_init(void)
-{
-  __HAL_RCC_DMA1_CLK_ENABLE();
-
-  // NVIC settings
-  HAL_NVIC_SetPriority(DMA1_Channel4_5_6_7_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Channel4_5_6_7_IRQn);
-
-}
-
 /*
  *  HSI 40MHz
  */
