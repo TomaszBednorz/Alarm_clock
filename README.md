@@ -30,7 +30,7 @@ Small home project of alarm clock, which contains some easy to do features. Proj
 - [x] Comments actualization && bug revision
 
 ## Electrical diagram
-![Alarm_clock_image](https://user-images.githubusercontent.com/62250785/129609146-f914501b-797c-48fd-8f73-8e4c082d9d3c.PNG)
+![Alarm_clock_image](https://user-images.githubusercontent.com/62250785/129610810-a35a103d-5fc9-4486-b508-970c285dd7fa.PNG)
 
 ## Video
 https://user-images.githubusercontent.com/62250785/129609163-3a5d4805-ee18-41be-baff-18f1760903d1.mp4
