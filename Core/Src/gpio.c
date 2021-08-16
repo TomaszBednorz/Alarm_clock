@@ -8,10 +8,10 @@ void gpio_init()
 	GPIO_InitTypeDef GPIO_led = {0};
 	/*
 	 * PA12 --> BUTTON_ACCEPT
-	 * PA11 --> LEFT_BUTTON
-	 * PB12 --> RIGHT_BUTTON
-	 * PB11 --> UP_BUTTON
-	 * PC8  --> DOWN_BUTTON
+	 * PA11 --> BUTTON_LEFT
+	 * PB12 --> BUTTON_RIGHT
+	 * PB11 --> BUTTON_UP
+	 * PC8  --> BUTTON_DOWN
 	 */
 	__HAL_RCC_GPIOA_CLK_ENABLE();
 	__HAL_RCC_GPIOB_CLK_ENABLE();

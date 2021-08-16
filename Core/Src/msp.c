@@ -56,7 +56,7 @@ void HAL_TIM_OC_MspInit(TIM_HandleTypeDef *htim)
 	__HAL_RCC_GPIOA_CLK_ENABLE();
 
 	/*
-	 *  PA5 --> TIM2_CH2
+	 *  PA1 --> TIM2_CH2
 	 */
 
 	GPIO_tim2.Pin = GPIO_PIN_1;

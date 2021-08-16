@@ -211,10 +211,12 @@ void alarm_service(void)
 	{
 		if(active_alarms == DS3231_RTC_ALARM_1)
 		{
+			alarm_1 = rtc_get_alarm(DS3231_RTC_ALARM_1);
 			sprintf(display.line_1st, "ALARM 1    %d:%d", alarm_1.hours, alarm_1.minutes);
 		}
 		else if(active_alarms == DS3231_RTC_ALARM_2)
 		{
+			alarm_2 = rtc_get_alarm(DS3231_RTC_ALARM_2);
 			sprintf(display.line_1st, "ALARM 2    %d:%d", alarm_2.hours, alarm_2.minutes);
 		}
 
@@ -500,7 +502,7 @@ static void set_date_time(void)
 						default:
 							break;
 					}
-					sprintf(display.line_2nd, "    %d:%d:%d", time.hours, time.minutes, time.seconds);
+					sprintf(display.line_2nd, "    %d:%d:%d  ", time.hours, time.minutes, time.seconds);
 					lcd_update(&display, LINE_SECOND);
 					HAL_Delay(50); // debouncing protection and break after click
 
@@ -620,7 +622,7 @@ static void set_alarm(RTC_alarm alarm, uint8_t alarm_num)
 					}
 					else if(alarm.minutes == 0)
 					{
-						alarm.minutes = 23;
+						alarm.minutes = 59;
 					}
 					break;
 				case ALARM_STATE_DAY:
