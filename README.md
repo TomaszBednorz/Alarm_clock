@@ -3,14 +3,14 @@
 ## Description
 Small home project of alarm clock, which contains some easy to do features. Project is written in STM32CubeIDE, without CubeMX code generator. 
 
-## Functionality
+## Functionalities
 - User can read current date and time from LCD display
 - User can set two different alarms and current time by buttons
 - Alarms trigger buzzer and LED
 - User can choose different types of LED blinking and buzzer melody
 
 ## Bill of materials
-- STM32 Nucleo F072RB
+- STM32F072RB Nucleo board
 - DS3231 real time clock
 - LCD display with HD44780 driver
 - I2C converter to HD44780 (PCF8574)
