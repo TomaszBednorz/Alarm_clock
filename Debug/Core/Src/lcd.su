@@ -1,5 +1,0 @@
-lcd.c:3:13:lcd_write	32	static
-lcd.c:22:6:lcd_init	32	static
-lcd.c:46:6:lcd_clear	24	static
-lcd.c:67:6:lcd_clear_and_update	48	static
-lcd.c:101:6:lcd_update	48	static

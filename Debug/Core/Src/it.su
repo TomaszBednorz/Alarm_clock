@@ -1,6 +1,0 @@
-it.c:12:6:NMI_Handler	8	static
-it.c:23:6:HardFault_Handler	8	static
-it.c:34:6:SysTick_Handler	8	static
-it.c:40:6:TIM2_IRQHandler	8	static
-it.c:45:6:TIM6_DAC_IRQHandler	8	static
-it.c:51:6:DMA1_Channel4_5_6_7_IRQHandler	8	static

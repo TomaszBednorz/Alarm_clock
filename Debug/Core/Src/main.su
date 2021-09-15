@@ -1,6 +1,0 @@
-main.c:26:5:main	24	static
-main.c:115:6:time_date_actualization	48	static
-main.c:179:6:main_menu	16	static
-main.c:250:6:set_date_time	48	static
-main.c:465:6:buzzer_service	24	static
-main.c:527:6:HAL_TIM_PeriodElapsedCallback	16	static
